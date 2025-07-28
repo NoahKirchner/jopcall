@@ -8,6 +8,7 @@ repository = "https://github.com/NoahKirchner/jopcall"
 keywords = ["cybersecurity", "malware", "syscalls"]
 readme = "README.md"
 license = "MIT"
+exclude = ["/target/"]
 
 [lib]
 name = "jopcall"
