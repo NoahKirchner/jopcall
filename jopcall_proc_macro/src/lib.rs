@@ -4,6 +4,9 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+/// A procedural macro that hashes a &str at compile time so that the RUNTIME_HASHER can find it.
+/// If you replace the RUNTIME_HASHER with a custom function, you're likely going to want to
+/// replace this too.
 #[proc_macro]
 pub fn hash(input: TokenStream) -> TokenStream {
 

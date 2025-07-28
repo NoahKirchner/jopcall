@@ -4,6 +4,11 @@ use core::ffi::CStr;
 
 use crate::RUNTIME_HASHER;
 
+/// This macro makes it extremely easy to call a windows function from your Rust code without
+/// importing it. Simply provide the hashed name of the dll, the hashed name of the function you
+/// want to call, and then whichever arguments it requires passed as if they are variadics. Please
+/// be very careful about your types, passing the wrong type is undefined behaviour and causes some
+/// extremely strange behaviour.
 #[macro_export]
 macro_rules! functioncall {
     ($dll_name:expr, $function_name:expr $(,$args:expr)*) => {
@@ -19,7 +24,9 @@ macro_rules! functioncall {
 
 //32 bit compatibility will require a different version of this function, as the NT headers are
 //   different depending on this 
-
+/// This takes in a dll base address and a hashed function name, uses a bunch of fixed offsets to
+/// parse through the PE and NT header of the provided dll's export address table, and returns a
+/// pointer to the requested function to be called or parsed.
 pub unsafe fn get_function_pointer(dll_base_address: *const c_void, function_name:u128)->*const c_void{
     
     // Getting export directory 

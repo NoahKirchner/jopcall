@@ -9,4 +9,5 @@ This is an extremely unsafe project built to allow users to make Windows syscall
 * IAT obfuscation. Use whatever functions you want without getting flagged!
 * User defineable hashing function to allow custom implementations. You don't need to worry about anyone running strings on your tool.
 * No heap allocations and no standard library. You can compile anything made with this directly to shellcode.
+* Checks for hooks on syscalls and tells you about them.
 * Near-zero memory safety. You get to experience the joy of tracing any errors through WinDbg for hours.

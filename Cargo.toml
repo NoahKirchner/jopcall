@@ -9,3 +9,10 @@ path = "src/lib.rs"
 
 [dependencies]
 jopcall_proc_macro = { path = "jopcall_proc_macro" }
+
+# If rust tries to optimize the code it fails miserably. Don't change this.
+[profile.release]
+opt-level = 0 
+lto = false 
+codegen-units = 1 
+

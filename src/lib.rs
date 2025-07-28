@@ -19,7 +19,11 @@ pub mod hashing;
 
 // Re exporting the proc macro all over the floor 
 pub use jopcall_proc_macro::*;
-
+/// The function type that any RUNTIME_HASHER needs to be.
 type RuntimeHasherFunction = unsafe fn(&str) -> u128;
 #[no_mangle]
+/// A static variable that you can overwrite with your own hashing function. This means that if you
+/// have your own hashing function that returns a u128, you can have the library use that whenever
+/// it's searching for strings on the system. Combine this with your own compile time hashing macro
+/// to implement custom API hashing.
 pub static mut RUNTIME_HASHER: RuntimeHasherFunction = crate::hashing::default_hasher;

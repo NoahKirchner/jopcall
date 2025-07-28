@@ -1,5 +1,7 @@
 // This is a really bad implementation of the sbdm hashing function with some stolen parts of
 // MurmurHash2
+/// The built in hashing function. If you intend to replace this, you need to have it  
+/// take in a &str and return a u128 that (ideally) doesn't collide.
 pub unsafe fn default_hasher(input:&str)->u128 {
     let mut hash:u128 = 0;
     for char in input.chars() {

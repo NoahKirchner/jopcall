@@ -18,7 +18,9 @@ use crate::helper::UNICODE_STRING;
 use crate::RUNTIME_HASHER;
 
 //@TODO maybe add a 32 bit feature? very big maybe. Also maybe modify this to just be "get dll base
-//address" so that it can be used for other things. Again big maybe
+//address" so that it can be used for other things. Again big maybe 
+/// This takes a hashed dll name and then uses the PEB and a bunch of fixed memory offsets to get
+/// the requested dll's base address as a *const c_void.
 pub unsafe fn get_dll_base_address(dll:u128)->Result<*const c_void, JopcallError>{
     // Locally scoped struct for the doubly linked list 
     // @TODO remove debug
@@ -28,7 +30,6 @@ pub unsafe fn get_dll_base_address(dll:u128)->Result<*const c_void, JopcallError
         pub flink: *mut LIST_ENTRY<'a>,
         pub blink: *mut LIST_ENTRY<'a>,
     }
-    // Fucking unicode. @TODO(maybe) consider moving this to its own file if necessary.
     
     let peb_address: *const *const c_void;
     // Moves GS Register+0x60 into local variable peb_address

@@ -3,6 +3,10 @@ use crate::helper::{search_bytes, JopcallError};
 use core::arch::global_asm;
 use core::ptr::slice_from_raw_parts;
 
+/// A struct representing a parsed system call. You are free to modify these if you wanted to do
+/// something like make a syscall to a neighbor ala hell's gate or hall or whichever one does that.
+/// This also tells you if the syscall is hooked (Some windows APIs are by default) if you'd like
+/// to act on that in any way.
 #[repr(C)]
 #[derive(Debug)]
 pub struct Syscall {
@@ -11,7 +15,16 @@ pub struct Syscall {
     pub hooked:bool,
 }
 
-
+/// A macro which makes it much easier to make an indirect syscall via JOP. You first need to
+/// provide it a slice of gadgets where the first gadget is used to jump to rcx and the rest are
+/// placed on the stack as return values after the syscall. There is a maximum of 5 gadgets. It
+/// then takes a syscall struct of the syscall you want to call, and variadic arguments for the
+/// NtApi arguments that the syscall takes. 
+///
+/// gadget_list format:
+/// 1: something that ends in jmp rcx without clobbering any registers or misaligning the stack 
+/// 2: The address that the syscall returns to 
+/// 3+ Any combination of gadgets you want as long as it ends in a ret
 #[macro_export]
 macro_rules! jopcall {
     // Passed with gadget array as first argument.
@@ -43,6 +56,8 @@ macro_rules! jopcall {
         }
     }
 }
+/// This is a macro to make a syscall without any return address obfuscation. Simply pass the
+/// syscall struct of the syscall you want to call and any arguments it takes.
 #[macro_export]
 macro_rules! syscall{
     // Passed with no gadget list, so it just jumps directly to the syscall and returns 
@@ -66,6 +81,9 @@ macro_rules! syscall{
     }
 }
 }
+/// A macro that makes it easier to build the syscall struct. You pass it the hashed name of a dll
+/// (Almost certainly ntdll.dll) and the name of the specific syscall (NtWhatever or ZwWhatever)
+/// and it will construct the struct for you.
 #[macro_export]
 macro_rules! get_syscall{
     ($dll_name:expr, $syscall_name:expr) => {
@@ -83,6 +101,12 @@ macro_rules! get_syscall{
 #[repr(C)]
 pub struct SyscallCount(pub u16, pub u16);
 
+/// A raw function to look up a syscall. It takes the memory address of a parsed Nt function and
+/// attempts to find the syscall stub and extract the SSN and syscall address from it by using the
+/// search_bytes function defined elsewhere in the program. If the function call provided isn't a
+/// syscall (For example if it's an RtlWhatever NTApi function) or if it is mangled in some way, it
+/// will return an error. This also looks for hooks and will reflect that in the Syscall struct.
+/// Note that some legitimate syscalls are hooked by default.
 pub unsafe fn lookup_syscall(function_address:*const c_void)->Result<Syscall, JopcallError>{
 
     // We search for these to avoid EDR hooking. This appears immediately following the ntdll
@@ -139,6 +163,13 @@ pub unsafe fn lookup_syscall(function_address:*const c_void)->Result<Syscall, Jo
 // I know that this function name is hardly descriptive, but the name has to match 
 // the label in the assembly below and that assembly gets copy pasted with labels included
 extern "C" { 
+/// Super voodoo bullshit that does a lot of things. I would encourage you not to call this
+/// directly, but if you do it takes a list of gadgets as defined in the jopcall macro, the ssn of
+/// a syscall, the address of a syscall, and a struct that contains the number of arguments and
+/// gadgets passed. It then takes whatever variadic arguments the syscall would take. Note that if
+/// you mess up any of these values it will probably crash horribly and the function itself is x64
+/// assembly. If you really want to play with this there are a lot of comments in the source code
+/// in src/syscall.rs i'd encourage you to look at instead.
     pub fn isc(
     gadget_list:*const c_void,
     ssn:u16,

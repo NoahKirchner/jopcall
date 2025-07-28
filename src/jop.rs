@@ -5,7 +5,8 @@ use crate::helper::{JopcallError, search_bytes};
 const SECTION_HEADER_SIZE:isize = 0x28;
 const SECTION_MEM_EXECUTE:u32 = 0x20000000;
 
-
+/// A struct representing a memory section of a dll. You can use this to find gadgets in executable
+/// memory.
 #[derive(Copy, Clone, Debug)]
 pub struct MemorySection {
     virtual_size:u32,
@@ -13,6 +14,12 @@ pub struct MemorySection {
     characteristics:u32
 }
 
+/// This macro should make finding gadgets in dlls extremely simple. If you want more specific
+/// details, check out the functions get_image_memory_sections and search_gadget, but basically
+/// this takes in the (hashed) name of a dll, a slice representing the gadget to look for (IE &\[0xc3\]
+/// for ret), the maximum number of sections to bother iterating through, and the maximum number of
+/// gadgets to return. It returns a tuple of (number of gadgets found, array of gadget addresses)
+/// so that you can trim down the array it returns to a slice of only the "real" number of gadgets.
 #[macro_export]
 macro_rules! get_gadgets {
     ($dll_name:expr, $gadget_asm:expr, $max_sections:expr, $max_gadgets:expr) => {
@@ -30,6 +37,10 @@ macro_rules! get_gadgets {
 // Takes a mutable reference to a slice and fills it either to the size of the slice or to the
 // maximum number of sections, returning the value. If this fails the program will panic so no
 // errors
+/// This takes a mutable reference to a slice of memory and fills it with any sections of memory
+/// found in the dll you searched. Its return value is the number of sections it successfully
+/// returned. You should probably use the get_gadgets macro for this unless you're doing something
+/// cool.
 pub unsafe fn get_image_memory_sections<'a>(dll_base_address:*const c_void, section_buffer:&'a mut [MemorySection])->usize{
     let e_lfanew:u32 = *(dll_base_address.cast::<u8>().offset(0x3C) as *const u32);
     let nt_header_address: *const c_void = dll_base_address.cast::<u8>().offset(e_lfanew as isize) as *const c_void;
@@ -57,6 +68,11 @@ pub unsafe fn get_image_memory_sections<'a>(dll_base_address:*const c_void, sect
     return sections_to_read as usize;
 }
 
+/// This takes a slice representing a gadget (such as &\[0xc3\] being a ret instruction), a mutable
+/// reference to an empty buffer, and a source slice of MemorySections. It will then search through
+/// the provided memory sections for the memory addresses of the requested gadget and fill the
+/// mutable buffer with as many as it can find. Its return value is the number of gadgets found or
+/// an error if none are found.
 pub unsafe fn search_gadget<'a>(gadget_asm:&[u8],section_list: &[MemorySection], gadget_buffer:&'a mut [*const c_void])->Result<usize, JopcallError>{
     let gadget_number = gadget_buffer.len();
     let mut gadget_counter:usize = 0;
