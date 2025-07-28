@@ -1,0 +1,1 @@
+/home/noah/Programming/rust/jopcall/jopcall_proc_macro/target/package/jopcall_proc_macro-0.1.0/target/debug/libjopcall_proc_macro.so: /home/noah/Programming/rust/jopcall/jopcall_proc_macro/target/package/jopcall_proc_macro-0.1.0/src/lib.rs

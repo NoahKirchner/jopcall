@@ -12,6 +12,8 @@ dependencies = [
 [[package]]
 name = "jopcall_proc_macro"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2f26fb0bc6113c14478439a21fb09ef7ae797755cfe6384125d4fa9db3af543"
 dependencies = [
  "proc-macro2",
  "quote",
