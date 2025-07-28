@@ -1,0 +1,15 @@
+[package]
+name = "jopcall_proc_macro"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "*"
+syn = { version = "*", features = ["extra-traits"]}
+proc-macro2 = "*"
+
+[profile.dev]
+overflow-checks = false

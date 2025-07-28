@@ -1,0 +1,11 @@
+[package]
+name = "jopcall"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "jopcall"
+path = "src/lib.rs"
+
+[dependencies]
+jopcall_proc_macro = { path = "jopcall_proc_macro" }
