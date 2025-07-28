@@ -1,5 +1,8 @@
 This project is dedicated to the 14 Yuenglings that proudly served and lost their lives to produce this project.
 
+Read more about how it works here: https://kirchware.com/Dynamic-Indirect-Syscalls-via-JOP-or-ROP-Rust
+
+
 # Overview 
 This is an extremely unsafe project built to allow users to make Windows syscalls through a simple API while obfuscating the return address with a user defined ROP chain discovered at runtime. Outside of the procedural macro for API hashing it has no dependencies, makes no heap allocations, and can be compiled directly to position independent shellcode.
 
