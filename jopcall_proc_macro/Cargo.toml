@@ -3,14 +3,16 @@ name = "jopcall_proc_macro"
 version = "0.1.0"
 edition = "2024"
 exclude = ["target/"]
+description = "Macro in support of jopcall to perform compile time API hashing"
+license = "MIT"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-quote = "*"
-syn = { version = "*", features = ["extra-traits"]}
-proc-macro2 = "*"
+quote = "1.0.40"
+syn = { version = "2.0.104", features = ["extra-traits"]}
+proc-macro2 = "1.0.95"
 
 [profile.dev]
 overflow-checks = false
