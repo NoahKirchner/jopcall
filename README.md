@@ -1,6 +1,6 @@
 This project is dedicated to the 14 Yuenglings that proudly served and lost their lives to produce this project.
 
-Read more about how it works here: https://kirchware.com/Dynamic-Indirect-Syscalls-via-JOP-or-ROP-Rust
+Read more about how it works here: https://kirchware.com/Dynamic-Indirect-Syscalls-via-JOP-or-ROP-in-Rust
 
 
 # Overview 
